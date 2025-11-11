@@ -21,56 +21,26 @@ speciesTableServer <- function(id, species_data, selected_station) {
 
     # Dynamic card header
     output$card_header <- shiny::renderUI({
-      station <- selected_station()
-      if (is.null(station)) {
-        "Species Detected"
-      } else {
         shiny::tagList(
           "Species detected in ",
-          shiny::span(station, style = "color: #0066CC;")
+          shiny::span(selected_station(), style = "color: #0066CC;")
         )
-      }
-    })
+      })
 
     # Create filtered species table
     filtered_data <- shiny::reactive({
       station <- selected_station()
-
-      if (is.null(station)) {
-        return(data.frame(
-          Group = character(),
-          Genus = character(),
-          Species = character(),
-          Count = integer(),
-          stringsAsFactors = FALSE
-        ))
-      }
-
-      # Use station name directly (already matches column names in CSV)
-      station_col <- station
-
-      # Check if column exists in species_data
-      if (!station_col %in% names(species_data)) {
-        return(data.frame(
-          Group = character(),
-          Genus = character(),
-          Species = character(),
-          Count = integer(),
-          stringsAsFactors = FALSE
-        ))
-      }
-
       # Filter and prepare data
       species_data |>
-        dplyr::select(Group, Genus, Species, Count = dplyr::all_of(station_col)) |>
-        dplyr::filter(Count > 0) |>
-        dplyr::arrange(dplyr::desc(Count))
+        dplyr::filter(station == station_id) 
     })
 
     # Render reactable
     output$species_table <- reactable::renderReactable({
       reactable::reactable(
-        filtered_data(),
+        filtered_data() |>
+          dplyr::select(-station_id) |>  
+          dplyr::arrange(desc(n_reads)),
         searchable = TRUE,
         pagination = TRUE,
         defaultPageSize = 15,
@@ -93,8 +63,8 @@ speciesTableServer <- function(id, species_data, selected_station) {
             minWidth = 120,
             style = list(fontStyle = "italic")
           ),
-          Count = reactable::colDef(
-            name = "Read Count",
+          n_reads = reactable::colDef(
+            name = "Reads count",
             format = reactable::colFormat(separators = TRUE),
             minWidth = 100,
             align = "right",

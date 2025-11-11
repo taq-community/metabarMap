@@ -31,9 +31,9 @@ mapServer <- function(id, map_data) {
           color = "white",
           weight = 2,
           layerId = ~station,
-          label = ~paste0(station, ": ", n_species, " species"),
+          label = ~lapply(paste0("<strong>Station ", station, "</strong><br>", n_species, " species detected"), htmltools::HTML),
           labelOptions = leaflet::labelOptions(
-            style = list("font-weight" = "normal", padding = "3px 8px"),
+            style = list("padding" = "3px 8px"),
             textsize = "13px",
             direction = "auto"
           )
@@ -48,7 +48,7 @@ mapServer <- function(id, map_data) {
         leaflet::setView(
           lng = mean(map_data$long),
           lat = mean(map_data$lat),
-          zoom = 11
+          zoom = 12
         ) |>
         # Highlight first station on load
         leaflet::addCircleMarkers(
@@ -68,7 +68,6 @@ mapServer <- function(id, map_data) {
       click <- input$map_marker_click
       if (!is.null(click)) {
         selected_station(click$id)
-        print(click$id)
 
         # Update map to highlight selected station
         leaflet::leafletProxy("map") |>

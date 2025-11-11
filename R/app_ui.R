@@ -11,7 +11,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     bslib::page_navbar(
-      title = "MetabarMap",
+      title = "Metabarcoding results preview",
       theme = bslib::bs_theme(
         preset = "shiny",
         base_font = bslib::font_google("Inter"),
@@ -28,7 +28,7 @@ app_ui <- function(request) {
 
           # Map panel
           bslib::card(
-            bslib::card_header(h4("Sampling stations")),
+            bslib::card_header(h5("Sampling stations")),
             bslib::card_body(
               mapUI("map_module")
             )
@@ -37,7 +37,7 @@ app_ui <- function(request) {
           # Species table panel
           bslib::card(
             bslib::card_header(
-              h4(shiny::uiOutput("species_table_module-card_header"))
+              h5(shiny::uiOutput("species_table_module-card_header"))
             ),
             bslib::card_body(
               speciesTableUI("species_table_module")
