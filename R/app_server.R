@@ -5,5 +5,27 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # Your application server logic
+  # Load data
+  localisations <- read.csv("data/localisations.csv", stringsAsFactors = FALSE)
+  species_data <- read.csv("data/species_table.csv", stringsAsFactors = FALSE)
+
+  # Prepare data: calculate species richness per station
+  species <- species_data |>
+    dplyr::filter(TaxonName != "sample") |>
+    dplyr::filter(Group != "MultipleHits") |>
+    dplyr::select(Group, Genus, Species, dplyr::all_of(get_golem_config("station_ids"))) |>
+    tidyr::pivot_longer(dplyr::all_of(get_golem_config("station_ids")), names_to = "station_id", values_to = "n_reads") |>
+    dplyr::filter(n_reads > 0) |>
+    dplyr::group_by(station_id) |>
+    dplyr::summarise(n_species = dplyr::n_distinct(Genus, Species))
+  
+  # Merge location data with species richness
+  map_data <- localisations |>
+    dplyr::right_join(species, by = c("station" = "station_id"))
+
+  # Map module - returns selected station
+  selected_station <- mapServer("map_module", map_data)
+
+  # Species table module
+  speciesTableServer("species_table_module", species, selected_station)
 }
