@@ -1,62 +1,98 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# `{metabarMap}`
+# metabarMap
 
-<!-- badges: start -->
-<!-- badges: end -->
+Interactive Shiny application for visualizing metabarcoding results on a
+map.
 
-## Installation
+## Description
 
-You can install the development version of `{metabarMap}` like so:
+This application displays metabarcoding detection data for multiple
+sampling stations. Users can:
+
+- View sampling stations on an interactive map colored by species
+  richness
+- Click stations to see detected species with images, common names, and
+  links to external databases
+- Browse ambiguous species groups that could not be distinguished
+- Download all data as CSV files
+
+## Data Structure
+
+The application requires project-specific data files in `inst/extdata/`:
+
+### Required CSV Files
+
+1.  **localisations.csv** - Station coordinates
+    - Columns: `station`, `lat`, `long`
+    - Example: `ST1,51.6908819,-75.8168186`
+2.  **species_table.csv** - Detection data (wide format)
+    - Columns: `TaxonName`, `Group`, `Genus`, `Species`, `ST1`, `ST2`,
+      …, `STn`
+    - Each station column contains read counts (numeric)
+    - Species with `Group="zMultiple"` are treated as ambiguous
+      detections
+    - Ambiguous species may have colon-separated names:
+      `"species1 : species2"`
+    - Ambiguous species may have underscore format:
+      `"Group_Genus_Species"`
+3.  **species_info.csv** - Species metadata
+    - Columns: `species`, `English`, `French`, `gbif_url`, `col_link`,
+      `itis_url`, `Native_Quebec`, `Exotic_Quebec`, `img`
+    - `species`: Scientific name (Genus species)
+    - `English`/`French`: Common names
+    - `*_url`: Links to external databases (GBIF, Catalogue of Life,
+      ITIS)
+    - `Native_Quebec`/`Exotic_Quebec`: Boolean flags for species status
+    - `img`: Path to species image (e.g.,
+      `inst/extdata/img/Species_name.jpg`)
+
+### Images
+
+Species images should be placed in `inst/extdata/img/` with filenames
+matching the paths in `species_info.csv`.
+
+## Running Locally
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
-```
+# Install dependencies
+remotes::install_local()
 
-## Run
-
-You can launch the application by running:
-
-``` r
+# Run the app
 metabarMap::run_app()
 ```
 
-## About
+## Docker Deployment
 
-You are reading the doc about version : 0.0.0.9000
+### Build for ShinyProxy Registry
 
-This README has been compiled on the
+1.  Open SSH tunnel to remote server:
 
-``` r
-Sys.time()
-#> [1] "2025-11-11 13:50:32 EST"
+``` bash
+ssh -i ~/.ssh/id_compute_cloud -L 5001:localhost:5000 sviss@ip.to.compute.cloud.canada
 ```
 
-Here are the tests results and package coverage:
+2.  Build and tag the image (replace `project-tag` with your project
+    identifier):
 
-``` r
-devtools::check(quiet = TRUE)
-#> ══ Documenting ═════════════════════════════════════════════════════════════════
-#> ℹ Installed roxygen2 version (7.3.3) doesn't match required (7.1.1)
-#> ✖ `check()` will not re-document this package
-#> ── R CMD check results ────────────────────────────── metabarMap 0.0.0.9000 ────
-#> Duration: 9s
-#> 
-#> ❯ checking DESCRIPTION meta-information ... NOTE
-#>   Malformed Description field: should contain one or more complete sentences.
-#>   Non-standard license specification:
-#>     What license is it under?
-#>   Standardizable: FALSE
-#> 
-#> ❯ checking top-level files ... NOTE
-#>   Non-standard files/directories found at top level:
-#>     ‘S3-utils.R’ ‘test-s3.r’
-#> 
-#> 0 errors ✔ | 0 warnings ✔ | 2 notes ✖
+``` bash
+docker build -t localhost:5001/metabarmap:project-tag .
 ```
 
-``` r
-covr::package_coverage()
-#> Error in loadNamespace(x): there is no package called 'covr'
+3.  Push to ShinyProxy registry:
+
+``` bash
+docker push localhost:5001/metabarmap:project-tag
+```
+
+## Configuration
+
+Station IDs are configured in `inst/golem-config.yml`:
+
+``` yaml
+default:
+  station_ids: ["ST1","ST2","ST3",...]
+  project_name: "Your Project Name"
+  project_logo: "https://your-logo-url.png"
 ```
