@@ -5,12 +5,17 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
+  # Get path to installed package data
+  app_sys <- function(...) {
+    system.file(..., package = "metabarMap")
+  }
+
   # Add resource path for images
-  shiny::addResourcePath("img", "data/img")
+  shiny::addResourcePath("img", app_sys("extdata", "img"))
 
   # Load data
-  localisations <- read.csv("data/localisations.csv", stringsAsFactors = FALSE)
-  species_data_raw <- read.csv("data/species_table.csv", stringsAsFactors = FALSE)
+  localisations <- read.csv(app_sys("extdata", "localisations.csv"), stringsAsFactors = FALSE)
+  species_data_raw <- read.csv(app_sys("extdata", "species_table.csv"), stringsAsFactors = FALSE)
 
   # Prepare data: calculate species richness per station
   # Regular species (excluding ambiguous groups)
@@ -66,8 +71,8 @@ app_server <- function(input, output, session) {
       paste0("metabarMap_all_data_", Sys.Date(), ".zip")
     },
     content = function(file) {
-      # Get all CSV files in data folder
-      csv_files <- list.files("data", pattern = "\\.csv$", full.names = TRUE)
+      # Get all CSV files in extdata folder
+      csv_files <- list.files(app_sys("extdata"), pattern = "\\.csv$", full.names = TRUE)
 
       # Create temporary directory
       temp_dir <- tempdir()

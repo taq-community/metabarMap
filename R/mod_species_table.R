@@ -2,14 +2,15 @@
 speciesTableUI <- function(id) {
   ns <- shiny::NS(id)
   bslib::navset_card_tab(
+    title = h5("Species"),
     height = 600,
     full_screen = TRUE,
     bslib::nav_panel(
-      bslib::card_title("Detected Species"),
+      bslib::card_title("Detected", class = "text-md"),
       reactable::reactableOutput(ns("species_table"))
     ),
     bslib::nav_panel(
-      bslib::card_title("Ambiguous Detections"),
+      bslib::card_title("Ambiguous", class = "text-md"),
       reactable::reactableOutput(ns("ambiguous_table"))
     )
   )
@@ -20,7 +21,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
   shiny::moduleServer(id, function(input, output, session) {
 
     # Load species info
-    species_info <- read.csv("data/species_info.csv", stringsAsFactors = FALSE)
+    species_info <- read.csv(system.file("extdata", "species_info.csv", package = "metabarMap"), stringsAsFactors = FALSE)
 
     # Dynamic card header
     output$card_header <- shiny::renderUI({

@@ -3,12 +3,19 @@ Title: metabarMap
 Version: 0.0.0.9000
 Authors@R: 
     person("Steve", "Vissault", , "steve.vissault@inrs.ca", role = c("aut", "cre"))
-Description: Create metabarcoding map
-License: What license is it under?
-Imports: 
+Description: Expose metabarcoding results as a map
+License: MIT + file LICENSE
+Imports:
+    bslib,
     config,
+    dplyr,
     golem,
-    shiny
+    htmltools,
+    leaflet,
+    reactable,
+    shiny,
+    tidyr,
+    zip
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3

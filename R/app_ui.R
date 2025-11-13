@@ -35,7 +35,7 @@ app_ui <- function(request) {
         icon = NULL,
 
         bslib::layout_columns(
-          col_widths = c(7, 5),
+          col_widths = c(6, 6),
 
           # Map panel
           bslib::card(

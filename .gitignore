@@ -5,3 +5,6 @@
 .DS_Store
 .quarto
 data/*
+inst/extdata/*.csv
+inst/extdata/img/*.jpg
+inst/extdata/img/*.png
