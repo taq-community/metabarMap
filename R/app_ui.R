@@ -11,7 +11,18 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     bslib::page_navbar(
-      title = "Metabarcoding results preview",
+      title = shiny::tags$div(
+        style = "display: flex; align-items: center; gap: 15px;",
+        shiny::tags$img(
+          src = get_golem_config("project_logo"),
+          height = "80px",
+          style = "vertical-align: middle;"
+        ),
+        shiny::tags$span(
+          get_golem_config("project_name"),
+          style = "font-weight: 500;"
+        )
+      ),
       theme = bslib::bs_theme(
         preset = "shiny",
         base_font = bslib::font_google("Inter"),
@@ -20,28 +31,40 @@ app_ui <- function(request) {
       fillable = TRUE,
 
       bslib::nav_panel(
-        title = "Explore",
-        icon = shiny::icon("map-location-dot"),
+        title = NULL,
+        icon = NULL,
 
         bslib::layout_columns(
           col_widths = c(7, 5),
 
           # Map panel
           bslib::card(
-            bslib::card_header(h5("Sampling stations")),
+            bslib::card_header(
+              shiny::tags$h5(
+                "Sampling stations"
+              )
+            ),
             bslib::card_body(
+              class = "p-0",
               mapUI("map_module")
             )
           ),
 
           # Species table panel
-          bslib::card(
-            bslib::card_header(
-              h5(shiny::uiOutput("species_table_module-card_header"))
-            ),
-            bslib::card_body(
-              speciesTableUI("species_table_module")
-            )
+          speciesTableUI("species_table_module")
+        )
+      ),
+
+      bslib::nav_spacer(),
+
+      bslib::nav_item(
+        shiny::tags$div(
+          style = "display: flex; align-items: center; height: 100%;",
+          shiny::downloadButton(
+            "download_all_data",
+            "Download data",
+            icon = shiny::icon("download"),
+            class = "btn-outline-primary"
           )
         )
       )

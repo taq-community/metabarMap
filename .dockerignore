@@ -1,0 +1,33 @@
+# Git files
+.git
+.gitignore
+
+# R files
+.Rhistory
+.RData
+.Rproj.user
+*.Rproj
+
+# Development files
+dev
+tests
+vignettes
+
+# Documentation
+*.md
+README.md
+LICENSE
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp

@@ -2,6 +2,8 @@ default:
   golem_name: metabarMap
   golem_version: 0.0.0.9000
   app_prod: no
+  project_logo: https://b2756793.smushcdn.com/2756793/wp-content/themes/nemaska/assets/images/nemaska-logo-secondary-color.png?lossy=1&strip=1&webp=1
+  project_name: "Metabarcoding study results"
   station_ids: ["ST1","ST10","ST11","ST12","ST13","ST2","ST3","ST4","ST5","ST6","ST7","ST8","ST9"]
 production:
   app_prod: yes

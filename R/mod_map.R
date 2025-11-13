@@ -85,6 +85,26 @@ mapServer <- function(id, map_data) {
       }
     })
 
+    # Observe changes to selected_station (e.g., from URL restore)
+    shiny::observeEvent(selected_station(), {
+      station <- selected_station()
+      if (!is.null(station)) {
+        # Update map to highlight selected station
+        leaflet::leafletProxy("map") |>
+          leaflet::clearGroup("highlight") |>
+          leaflet::addCircleMarkers(
+            data = map_data[map_data$station == station, ],
+            lng = ~long,
+            lat = ~lat,
+            radius = 12,
+            fillColor = "transparent",
+            color = "blue",
+            weight = 4,
+            group = "highlight"
+          )
+      }
+    })
+
     # Return selected station as reactive
     return(selected_station)
   })
