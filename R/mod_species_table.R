@@ -2,7 +2,7 @@
 speciesTableUI <- function(id) {
   ns <- shiny::NS(id)
   bslib::navset_card_tab(
-    title = h5("Species"),
+    title = shiny::uiOutput(ns("card_title")),
     height = 600,
     full_screen = TRUE,
     bslib::nav_panel(
@@ -23,13 +23,18 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
     # Load species info
     species_info <- read.csv(system.file("extdata", "species_info.csv", package = "metabarMap"), stringsAsFactors = FALSE)
 
-    # Dynamic card header
-    output$card_header <- shiny::renderUI({
-        shiny::tagList(
+    # Dynamic card title
+    output$card_title <- shiny::renderUI({
+      station <- selected_station()
+      if (!is.null(station)) {
+        shiny::tags$h5(
           "Species in ",
-          shiny::span(selected_station(), style = "color: #0066CC;")
+          shiny::span(station, style = "color: #0066CC;")
         )
-      })
+      } else {
+        shiny::tags$h5("Species")
+      }
+    })
 
     # Create filtered species table
     filtered_data <- shiny::reactive({
@@ -259,7 +264,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
     output$ambiguous_table <- reactable::renderReactable({
       data_sorted <- filtered_ambiguous() |>
         dplyr::select(img, group_id, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, n_reads) |>
-        dplyr::arrange(group_id)
+        dplyr::arrange(dplyr::desc(n_reads), group_id)
 
       reactable::reactable(
         data_sorted,
