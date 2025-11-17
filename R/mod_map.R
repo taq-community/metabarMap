@@ -20,8 +20,21 @@ mapServer <- function(id, map_data) {
         domain = map_data$n_species
       )
 
-      leaflet::leaflet(map_data) |>
-        leaflet::addTiles() |>
+      leaflet::leaflet(map_data, options = leaflet::leafletOptions(maxZoom = 16)) |>
+        leaflet::addProviderTiles(
+          leaflet::providers$Esri.WorldImagery,
+          group = "Satellite"
+        ) |>
+        leaflet::addTiles(group = "OpenStreetMap") |>
+        leaflet::addLayersControl(
+          baseGroups = c("Satellite", "OpenStreetMap"),
+          position = "topright",
+          options = leaflet::layersControlOptions(collapsed = FALSE)
+        ) |>
+        leaflet::addScaleBar(
+          position = "bottomleft",
+          options = leaflet::scaleBarOptions(imperial = FALSE)
+        ) |>
         leaflet::addCircleMarkers(
           lng = ~long,
           lat = ~lat,
@@ -41,7 +54,7 @@ mapServer <- function(id, map_data) {
         leaflet::addLegend(
           pal = pal,
           values = ~n_species,
-          title = "Number of Species",
+          title = "Number of species detected",
           position = "bottomright",
           opacity = 0.8
         ) |>
