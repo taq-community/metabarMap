@@ -12,6 +12,7 @@ RUN Rscript -e 'remotes::install_version("zip",upgrade="never", version = "2.3.3
 RUN Rscript -e 'remotes::install_version("tidyr",upgrade="never", version = "1.3.1")'
 RUN Rscript -e 'remotes::install_version("reactable",upgrade="never", version = "0.4.4")'
 RUN Rscript -e 'remotes::install_version("leaflet",upgrade="never", version = "2.2.3")'
+RUN Rscript -e 'remotes::install_version("markdown",upgrade="never", version = "1.13")'
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.5.1")'
 RUN mkdir /build_zone
 ADD . /build_zone
