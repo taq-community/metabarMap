@@ -16,11 +16,11 @@ app_ui <- function(request) {
         shiny::tags$img(
           src = get_golem_config("project_logo"),
           height = "80px",
-          style = "vertical-align: middle;"
+          style = "vertical-align: middle"
         ),
-        shiny::tags$span(
+        shiny::tags$h3(
           get_golem_config("project_name"),
-          style = "font-weight: 500;"
+          style = "font-weight: bold;"
         )
       ),
       theme = bslib::bs_theme(
@@ -34,37 +34,59 @@ app_ui <- function(request) {
         title = NULL,
         icon = NULL,
 
-        bslib::layout_columns(
-          col_widths = c(6, 6),
-
-          # Map panel
-          bslib::card(
-            bslib::card_header(
-              shiny::tags$h5(
-                "Sampling stations"
-              )
-            ),
-            bslib::card_body(
-              class = "p-0",
-              mapUI("map_module")
-            )
+        bslib::layout_sidebar(
+          sidebar = bslib::sidebar(
+            id = "methods_sidebar",
+            open = FALSE,
+            position = "right",
+            width = "500px",
+            shiny::tags$h3("Methodology", style = "margin-top: 0;"),
+            shiny::uiOutput("methods_content")
           ),
 
-          # Species table panel
-          speciesTableUI("species_table_module")
+          bslib::layout_columns(
+            col_widths = c(6, 6),
+
+            # Map panel
+            bslib::card(
+              bslib::card_header(
+                shiny::tags$h5(
+                  "Sampling stations"
+                )
+              ),
+              bslib::card_body(
+                class = "p-0",
+                mapUI("map_module")
+              )
+            ),
+
+            # Species table panel
+            speciesTableUI("species_table_module")
+          )
         )
       ),
 
       bslib::nav_spacer(),
 
+      # Partner logos
+      bslib::nav_item(
+        shiny::uiOutput("partner_logos")
+      ),
+
       bslib::nav_item(
         shiny::tags$div(
-          style = "display: flex; align-items: center; height: 100%;",
+          style = "display: flex; align-items: center; height: 100%; gap: 10px;",
+          shiny::actionButton(
+            "toggle_methods",
+            "Methods",
+            icon = shiny::icon("circle-info"),
+            class = "btn-dark"
+          ),
           shiny::downloadButton(
             "download_all_data",
             "Download data",
             icon = shiny::icon("download"),
-            class = "btn-outline-primary"
+            class = "btn-primary"
           )
         )
       )

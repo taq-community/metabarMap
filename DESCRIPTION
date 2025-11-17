@@ -12,6 +12,7 @@ Imports:
     golem,
     htmltools,
     leaflet,
+    markdown,
     reactable,
     shiny,
     tidyr,

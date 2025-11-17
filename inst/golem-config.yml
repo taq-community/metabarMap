@@ -5,6 +5,7 @@ default:
   project_logo: https://b2756793.smushcdn.com/2756793/wp-content/themes/nemaska/assets/images/nemaska-logo-secondary-color.png?lossy=1&strip=1&webp=1
   project_name: "Metabarcoding study results"
   station_ids: ["ST1","ST10","ST11","ST12","ST13","ST2","ST3","ST4","ST5","ST6","ST7","ST8","ST9"]
+  methodology_file: "methodology.md"
 production:
   app_prod: yes
 dev:

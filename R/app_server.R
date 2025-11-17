@@ -49,6 +49,45 @@ app_server <- function(input, output, session) {
   # Species table module
   speciesTableServer("species_table_module", species_data, ambiguous_data, selected_station)
 
+  # Render partner logos
+  output$partner_logos <- shiny::renderUI({
+    # Get list of partner logo files
+    partners_dir <- app_sys("extdata", "img", "partners")
+    partner_files <- list.files(partners_dir, pattern = "\\.(png|jpg|jpeg|svg)$", ignore.case = TRUE)
+
+    # Create image tags for each partner logo
+    logo_tags <- lapply(partner_files, function(file) {
+      shiny::tags$img(
+        src = file.path("img/partners", file),
+        height = "80px",
+        style = "margin: 0 10px; vertical-align: middle;"
+      )
+    })
+
+    shiny::tags$div(
+      style = "display: flex; align-items: center; height: 100%; gap: 5px;",
+      shiny::tags$span(
+        "In collaboration with",
+        style = "font-size: 1em; margin-right: 10px; color: #666;"
+      ),
+      logo_tags
+    )
+  })
+
+  # Toggle methods sidebar
+  shiny::observeEvent(input$toggle_methods, {
+    bslib::sidebar_toggle("methods_sidebar")
+  })
+
+  # Render methods content
+  output$methods_content <- shiny::renderUI({
+    # Read methodology markdown file
+    methodology_file <- get_golem_config("methodology_file")
+    md_path <- app_sys("extdata", methodology_file)
+
+    shiny::includeMarkdown(md_path)
+  })
+
   # Update URL when station changes
   shiny::observe({
     station <- selected_station()
