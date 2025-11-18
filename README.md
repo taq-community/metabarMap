@@ -65,7 +65,7 @@ metabarMap::run_app()
 
 ## Docker Deployment
 
-### Build for ShinyProxy Registry
+### Build locally for ShinyProxy and upload on the remote registry
 
 1.  Open SSH tunnel to remote server:
 
@@ -84,6 +84,14 @@ docker build -t localhost:5001/metabarmap:project-tag .
 
 ``` bash
 docker push localhost:5001/metabarmap:project-tag
+```
+
+### On the remote server
+
+Pull the image localy from the registry
+
+``` bash
+docker pull localhost:500/metabarmap:v1.0.0-nemaska
 ```
 
 ## Configuration
