@@ -13,10 +13,10 @@ Imports:
     golem,
     htmltools,
     leaflet,
-    markdown,
     reactable,
     shiny,
     tidyr,
+    utils,
     zip
 Encoding: UTF-8
 LazyData: true

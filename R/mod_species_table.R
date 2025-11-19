@@ -33,7 +33,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
   shiny::moduleServer(id, function(input, output, session) {
 
     # Load species info
-    species_info <- read.csv(system.file("extdata", "species_info.csv", package = "metabarMap"), stringsAsFactors = FALSE)
+    species_info <- utils::read.csv(system.file("extdata", "species_info.csv", package = "metabarMap"), stringsAsFactors = FALSE)
 
     # Dynamic card title
     output$card_title <- shiny::renderUI({
@@ -112,15 +112,15 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
           status_ca_en = dplyr::case_when(
             is.na(status_ca) ~ NA_character_,
             status_ca == "En voie de disparition" ~ "Endangered",
-            status_ca == "Menacée" ~ "Threatened",
-            status_ca == "Préoccupante" ~ "Special Concern",
+            status_ca == "Menac\u00e9e" ~ "Threatened",
+            status_ca == "Pr\u00e9occupante" ~ "Special Concern",
             status_ca == "Disparue du pays" ~ "Extirpated",
             TRUE ~ status_ca
           ),
           status_qc_en = dplyr::case_when(
             is.na(status_qc) ~ NA_character_,
-            status_qc == "Menacée" ~ "Threatened",
-            status_qc == "Vulnérable" ~ "Vulnerable",
+            status_qc == "Menac\u00e9e" ~ "Threatened",
+            status_qc == "Vuln\u00e9rable" ~ "Vulnerable",
             status_qc == "Susceptible" ~ "Likely to be designated",
             TRUE ~ status_qc
           ),
@@ -170,15 +170,15 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
           status_ca_en = dplyr::case_when(
             is.na(status_ca) ~ NA_character_,
             status_ca == "En voie de disparition" ~ "Endangered",
-            status_ca == "Menacée" ~ "Threatened",
-            status_ca == "Préoccupante" ~ "Special Concern",
+            status_ca == "Menac\u00e9e" ~ "Threatened",
+            status_ca == "Pr\u00e9occupante" ~ "Special Concern",
             status_ca == "Disparue du pays" ~ "Extirpated",
             TRUE ~ status_ca
           ),
           status_qc_en = dplyr::case_when(
             is.na(status_qc) ~ NA_character_,
-            status_qc == "Menacée" ~ "Threatened",
-            status_qc == "Vulnérable" ~ "Vulnerable",
+            status_qc == "Menac\u00e9e" ~ "Threatened",
+            status_qc == "Vuln\u00e9rable" ~ "Vulnerable",
             status_qc == "Susceptible" ~ "Likely to be designated",
             TRUE ~ status_qc
           ),

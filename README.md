@@ -1,5 +1,7 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/taq-community/metabarMap/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/taq-community/metabarMap/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 # metabarMap
 
@@ -47,10 +49,14 @@ The application requires project-specific data files in `inst/extdata/`:
       ITIS)
     - `Native_Quebec`/`Exotic_Quebec`: Boolean flags for species status
       in Quebec
-    - `status_ca`: Boolean flag indicating species at risk status under
-      Canada’s Species at Risk Act (SARA/LEP)
-    - `status_qc`: Boolean flag indicating species at risk status under
-      Quebec’s Loi sur les espèces menacées ou vulnérables (LEMV)
+    - `status_ca`: Conservation status under Canada’s Species at Risk
+      Act (SARA/LEP) - values include “En voie de disparition”
+      (Endangered), “Menacée” (Threatened), “Préoccupante” (Special
+      Concern), “Disparue du pays” (Extirpated)
+    - `status_qc`: Conservation status under Quebec’s Loi sur les
+      espèces menacées ou vulnérables (LEMV) - values include “Menacée”
+      (Threatened), “Vulnérable” (Vulnerable), “Susceptible” (Likely to
+      be designated)
     - `img`: Path to species image (e.g.,
       `inst/extdata/img/Species_name.jpg`)
 
@@ -61,7 +67,10 @@ matching the paths in `species_info.csv`.
 
 ### Conservation Status Data Sources
 
-4.  **CA_espèces_en_péril.csv** - Canadian species at risk
+These files should be downloaded from their respective sources and
+placed in `inst/extdata/`:
+
+4.  **CA_especes_en_peril.csv** - Canadian species at risk
     - Source: [Registre public des espèces en péril
       (LEP)](https://registre-especes.canada.ca/index-fr.html#/especes?sortBy=commonNameSort&sortDirection=asc&pageSize=10)
     - Contains federal species at risk designations under Canada’s
@@ -71,6 +80,10 @@ matching the paths in `species_info.csv`.
       Québec](https://www.donneesquebec.ca/recherche/dataset/liste-de-la-faune-vertebree-du-quebec/resource/73060a93-990c-4529-b87e-9aaf6772cd06)
     - Contains provincial species at risk under Quebec’s Loi sur les
       espèces menacées ou vulnérables (LEMV)
+
+**Note:** These files are not tracked in version control due to their
+size. They must be downloaded manually before running
+`scripts/enrich_species.R`.
 
 ## Running Locally
 
@@ -115,11 +128,41 @@ docker pull localhost:500/metabarmap:v1.0.0-nemaska
 
 ## Configuration
 
-Station IDs are configured in `inst/golem-config.yml`:
+Application settings are configured in `inst/golem-config.yml`:
 
 ``` yaml
 default:
   station_ids: ["ST1","ST2","ST3",...]
   project_name: "Your Project Name"
   project_logo: "https://your-logo-url.png"
+  methodology_file: "methodology.md"
+  partners:
+    - name: "Partner Name"
+      max_height: "80px"
+      url: "https://partner-website.org"
+      image: "img/partners/logo.png"
 ```
+
+### Configuration Fields
+
+- **station_ids**: Array of station identifiers matching column names in
+  `species_table.csv`. These stations will be displayed on the map and
+  available for selection.
+
+- **project_name**: Application title displayed in the navigation bar
+  and browser tab.
+
+- **project_logo**: URL to project logo image. Can be an external URL
+  (<https://>) or path to local file in `inst/extdata/`.
+
+- **methodology_file**: Filename of markdown document in `inst/extdata/`
+  containing methodology description. Displayed in the “Methodology” tab
+  panel.
+
+- **partners**: List of partner organizations to display in the
+  application footer. Each partner requires:
+
+  - `name`: Organization name (used for alt text)
+  - `max_height`: Maximum logo height in CSS units (e.g., “80px”)
+  - `url`: Partner website URL (opens in new tab when logo is clicked)
+  - `image`: Path to logo file relative to `inst/extdata/` directory

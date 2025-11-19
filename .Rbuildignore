@@ -8,3 +8,4 @@ $run_dev.*
 ^README\.Rmd$
 ^LICENSE\.md$
 ^Dockerfile$
+^\.github$

@@ -14,8 +14,8 @@ app_server <- function(input, output, session) {
   shiny::addResourcePath("img", app_sys("extdata", "img"))
 
   # Load data
-  localisations <- read.csv(app_sys("extdata", "localisations.csv"), stringsAsFactors = FALSE)
-  species_data_raw <- read.csv(app_sys("extdata", "species_table.csv"), stringsAsFactors = FALSE)
+  localisations <- utils::read.csv(app_sys("extdata", "localisations.csv"), stringsAsFactors = FALSE)
+  species_data_raw <- utils::read.csv(app_sys("extdata", "species_table.csv"), stringsAsFactors = FALSE)
 
   # Prepare data: calculate species richness per station
   # Regular species (excluding ambiguous groups)
