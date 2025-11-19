@@ -6,6 +6,7 @@ Authors@R:
 Description: Expose metabarcoding results as a map
 License: MIT + file LICENSE
 Imports:
+    bsicons,
     bslib,
     config,
     dplyr,
