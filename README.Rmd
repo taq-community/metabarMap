@@ -50,13 +50,17 @@ Species images should be placed in `inst/extdata/img/` with filenames matching t
 
 ### Conservation Status Data Sources
 
-4. **CA_espèces_en_péril.csv** - Canadian species at risk
+These files should be downloaded from their respective sources and placed in `inst/extdata/`:
+
+4. **CA_especes_en_peril.csv** - Canadian species at risk
    - Source: [Registre public des espèces en péril (LEP)](https://registre-especes.canada.ca/index-fr.html#/especes?sortBy=commonNameSort&sortDirection=asc&pageSize=10)
    - Contains federal species at risk designations under Canada's Species at Risk Act (SARA/LEP)
 
 5. **QC_especes_en_peril.csv** - Quebec species at risk
    - Source: [Liste de la faune vertébrée du Québec - Données Québec](https://www.donneesquebec.ca/recherche/dataset/liste-de-la-faune-vertebree-du-quebec/resource/73060a93-990c-4529-b87e-9aaf6772cd06)
    - Contains provincial species at risk under Quebec's Loi sur les espèces menacées ou vulnérables (LEMV)
+
+**Note:** These files are not tracked in version control due to their size. They must be downloaded manually before running `scripts/enrich_species.R`.
 
 ## Running Locally
 
