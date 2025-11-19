@@ -39,12 +39,18 @@ The application requires project-specific data files in `inst/extdata/`:
       `"Group_Genus_Species"`
 3.  **species_info.csv** - Species metadata
     - Columns: `species`, `English`, `French`, `gbif_url`, `col_link`,
-      `itis_url`, `Native_Quebec`, `Exotic_Quebec`, `img`
+      `itis_url`, `Native_Quebec`, `Exotic_Quebec`, `status_ca`,
+      `status_qc`, `img`
     - `species`: Scientific name (Genus species)
     - `English`/`French`: Common names
     - `*_url`: Links to external databases (GBIF, Catalogue of Life,
       ITIS)
     - `Native_Quebec`/`Exotic_Quebec`: Boolean flags for species status
+      in Quebec
+    - `status_ca`: Boolean flag indicating species at risk status under
+      Canada’s Species at Risk Act (SARA/LEP)
+    - `status_qc`: Boolean flag indicating species at risk status under
+      Quebec’s Loi sur les espèces menacées ou vulnérables (LEMV)
     - `img`: Path to species image (e.g.,
       `inst/extdata/img/Species_name.jpg`)
 
@@ -52,6 +58,19 @@ The application requires project-specific data files in `inst/extdata/`:
 
 Species images should be placed in `inst/extdata/img/` with filenames
 matching the paths in `species_info.csv`.
+
+### Conservation Status Data Sources
+
+4.  **CA_espèces_en_péril.csv** - Canadian species at risk
+    - Source: [Registre public des espèces en péril
+      (LEP)](https://registre-especes.canada.ca/index-fr.html#/especes?sortBy=commonNameSort&sortDirection=asc&pageSize=10)
+    - Contains federal species at risk designations under Canada’s
+      Species at Risk Act (SARA/LEP)
+5.  **QC_especes_en_peril.csv** - Quebec species at risk
+    - Source: [Liste de la faune vertébrée du Québec - Données
+      Québec](https://www.donneesquebec.ca/recherche/dataset/liste-de-la-faune-vertebree-du-quebec/resource/73060a93-990c-4529-b87e-9aaf6772cd06)
+    - Contains provincial species at risk under Quebec’s Loi sur les
+      espèces menacées ou vulnérables (LEMV)
 
 ## Running Locally
 
