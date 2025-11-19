@@ -5,6 +5,7 @@ RUN echo "options(repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.m
 RUN R -e 'install.packages("remotes")'
 RUN Rscript -e 'remotes::install_version("htmltools",upgrade="never", version = "0.5.8.1")'
 RUN Rscript -e 'remotes::install_version("bslib",upgrade="never", version = "0.9.0")'
+RUN Rscript -e 'remotes::install_version("bsicons",upgrade="never", version = "0.1.2")'
 RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.1.4")'
 RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.11.1")'
 RUN Rscript -e 'remotes::install_version("config",upgrade="never", version = "0.3.2")'

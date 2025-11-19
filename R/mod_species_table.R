@@ -6,11 +6,23 @@ speciesTableUI <- function(id) {
     height = 600,
     full_screen = TRUE,
     bslib::nav_panel(
-      bslib::card_title("Detected", class = "text-md"),
+      title = htmltools::tagList(
+        "Detected ",
+        bslib::tooltip(
+          bsicons::bs_icon("info-circle", size = "0.8em"),
+          "Species with clear taxonomic assignments based on sequence matches."
+        )
+      ),
       reactable::reactableOutput(ns("species_table"))
     ),
     bslib::nav_panel(
-      bslib::card_title("Ambiguous", class = "text-md"),
+      title = htmltools::tagList(
+        "Ambiguous ",
+        bslib::tooltip(
+          bsicons::bs_icon("info-circle", size = "0.8em"),
+          "Groups where sequences match multiple species equally well, indicating potential presence of any species within the group."
+        )
+      ),
       reactable::reactableOutput(ns("ambiguous_table"))
     )
   )
@@ -36,20 +48,83 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
       }
     })
 
+    # Show detection status modal
+    shiny::observeEvent(input$show_detection_modal, {
+      shiny::showModal(
+        shiny::modalDialog(
+          title = htmltools::tags$div(
+            style = "font-weight: bold;",
+            "Detection Status"
+          ),
+          htmltools::tags$p("Species detections are classified into three confidence levels based on the number of DNA sequence reads:"),
+          htmltools::tags$table(
+            style = "width: 100%; border-collapse: collapse; margin: 1rem 0;",
+            htmltools::tags$thead(
+              htmltools::tags$tr(
+                htmltools::tags$th(style = "border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;", "Detection status"),
+                htmltools::tags$th(style = "border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;", "Read Count"),
+                htmltools::tags$th(style = "border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;", "Interpretation")
+              )
+            ),
+            htmltools::tags$tbody(
+              htmltools::tags$tr(
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", htmltools::tags$strong("Confident")),
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", "> 100 reads"),
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", "High confidence detection with strong DNA signal")
+              ),
+              htmltools::tags$tr(
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", htmltools::tags$strong("Probable")),
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", "10-100 reads"),
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", "Moderate confidence detection")
+              ),
+              htmltools::tags$tr(
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", htmltools::tags$strong("Uncertain")),
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", "< 10 reads"),
+                htmltools::tags$td(style = "border: 1px solid #ddd; padding: 8px;", "Low confidence detection, may require additional verification")
+              )
+            )
+          ),
+          htmltools::tags$p(
+            style = "margin-top: 1rem; font-style: italic;",
+            htmltools::tags$strong("Note:"), " Read counts reflect DNA concentrations detected in the sample, but are not directly proportional to organism abundance due to variations in the laboratory process and species autoecology."
+          ),
+          easyClose = TRUE,
+          footer = shiny::modalButton("Close")
+        )
+      )
+    })
+
     # Create filtered species table
     filtered_data <- shiny::reactive({
       station <- selected_station()
       # Filter and prepare data
       species_data |>
-        dplyr::filter(station == station_id) |>
+        dplyr::filter(station_id == station) |>
         dplyr::mutate(scientific_name = paste(Genus, Species)) |>
         dplyr::left_join(
           species_info |>
             dplyr::select(species, English, French, gbif_url, col_link, itis_url,
-                         Native_Quebec, Exotic_Quebec, img),
+                         Native_Quebec, Exotic_Quebec, status_ca, status_qc, img),
           by = c("scientific_name" = "species")
         ) |>
         dplyr::mutate(
+          # Translate conservation status to English
+          status_ca_en = dplyr::case_when(
+            is.na(status_ca) ~ NA_character_,
+            status_ca == "En voie de disparition" ~ "Endangered",
+            status_ca == "Menacée" ~ "Threatened",
+            status_ca == "Préoccupante" ~ "Special Concern",
+            status_ca == "Disparue du pays" ~ "Extirpated",
+            TRUE ~ status_ca
+          ),
+          status_qc_en = dplyr::case_when(
+            is.na(status_qc) ~ NA_character_,
+            status_qc == "Menacée" ~ "Threatened",
+            status_qc == "Vulnérable" ~ "Vulnerable",
+            status_qc == "Susceptible" ~ "Likely to be designated",
+            TRUE ~ status_qc
+          ),
+          # Create combined Status column
           Status = dplyr::case_when(
             Exotic_Quebec == TRUE ~ "Exotic",
             Native_Quebec == TRUE ~ "Native",
@@ -68,7 +143,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
       station <- selected_station()
       # Filter ambiguous groups and split species
       ambiguous_data |>
-        dplyr::filter(station == station_id) |>
+        dplyr::filter(station_id == station) |>
         dplyr::mutate(group_id = paste0("Group ", dplyr::row_number())) |>
         tidyr::separate_longer_delim(Species, delim = " : ") |>
         dplyr::mutate(
@@ -87,10 +162,27 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
         dplyr::left_join(
           species_info |>
             dplyr::select(species, English, French, gbif_url, col_link, itis_url,
-                         Native_Quebec, Exotic_Quebec, img),
+                         Native_Quebec, Exotic_Quebec, status_ca, status_qc, img),
           by = c("scientific_name" = "species")
         ) |>
         dplyr::mutate(
+          # Translate conservation status to English
+          status_ca_en = dplyr::case_when(
+            is.na(status_ca) ~ NA_character_,
+            status_ca == "En voie de disparition" ~ "Endangered",
+            status_ca == "Menacée" ~ "Threatened",
+            status_ca == "Préoccupante" ~ "Special Concern",
+            status_ca == "Disparue du pays" ~ "Extirpated",
+            TRUE ~ status_ca
+          ),
+          status_qc_en = dplyr::case_when(
+            is.na(status_qc) ~ NA_character_,
+            status_qc == "Menacée" ~ "Threatened",
+            status_qc == "Vulnérable" ~ "Vulnerable",
+            status_qc == "Susceptible" ~ "Likely to be designated",
+            TRUE ~ status_qc
+          ),
+          # Create combined Status column
           Status = dplyr::case_when(
             Exotic_Quebec == TRUE ~ "Exotic",
             Native_Quebec == TRUE ~ "Native",
@@ -106,10 +198,12 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
 
     # Render reactable
     output$species_table <- reactable::renderReactable({
+      data_sorted <- filtered_data() |>
+        dplyr::select(img, Group, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, status_qc_en, status_ca_en, n_reads, detection_status) |>
+        dplyr::arrange(dplyr::desc(n_reads))
+
       reactable::reactable(
-        filtered_data() |>
-          dplyr::select(img, Group, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, n_reads, detection_status) |>
-          dplyr::arrange(dplyr::desc(n_reads)),
+        data_sorted,
         searchable = TRUE,
         pagination = TRUE,
         defaultPageSize = 15,
@@ -232,26 +326,70 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
           itis_url = reactable::colDef(show = FALSE),
           Status = reactable::colDef(
             name = "Status",
-            minWidth = 100,
-            cell = function(value) {
+            minWidth = 150,
+            html = TRUE,
+            cell = function(value, index) {
+              status_ca <- data_sorted$status_ca_en[index]
+              status_qc <- data_sorted$status_qc_en[index]
+
+              parts <- list()
+
+              # Add Native/Exotic status
               if (value == "Exotic") {
-                htmltools::tags$span(
-                  "\u26a0 Exotic"
-                )
+                parts <- c(parts, list(htmltools::tags$div("\u26a0 Exotic")))
               } else if (value == "Native") {
-                htmltools::tags$span(
-                  "\u2713 Native"
-                )
+                parts <- c(parts, list(htmltools::tags$div("\u2713 Native")))
+              }
+
+              # Add CA conservation status
+              if (!is.na(status_ca)) {
+                parts <- c(parts, list(
+                  htmltools::tags$div(
+                    style = "color: #d9534f; margin-top: 4px;",
+                    paste0("In Canada: ", status_ca)
+                  )
+                ))
+              }
+
+              # Add QC conservation status
+              if (!is.na(status_qc)) {
+                parts <- c(parts, list(
+                  htmltools::tags$div(
+                    style = "color: #d9534f; margin-top: 4px;",
+                    paste0("In Quebec: ", status_qc)
+                  )
+                ))
+              }
+
+              if (length(parts) > 0) {
+                htmltools::tagList(parts)
               } else {
                 ""
               }
             }
           ),
+          status_qc_en = reactable::colDef(show = FALSE),
+          status_ca_en = reactable::colDef(show = FALSE),
           n_reads = reactable::colDef(
             show = FALSE
           ),
           detection_status = reactable::colDef(
             name = "Detection status",
+            header = function(value) {
+              htmltools::HTML(
+                paste0(
+                  '<span>Detection status ',
+                  '<a href="#" onclick="Shiny.setInputValue(\'species_table_module-show_detection_modal\', Math.random()); return false;" ',
+                  'style="color: #0066CC; cursor: pointer; text-decoration: none; margin-left: 5px;">',
+                  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="currentColor">',
+                  '<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1" fill="none"/>',
+                  '<text x="8" y="12" font-size="12" text-anchor="middle" fill="currentColor" font-weight="bold">i</text>',
+                  '</svg>',
+                  '</a></span>'
+                )
+              )
+            },
+            html = TRUE,
             minWidth = 150,
             align = "left",
             cell = function(value, index) {
@@ -289,7 +427,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
     # Render ambiguous groups table
     output$ambiguous_table <- reactable::renderReactable({
       data_sorted <- filtered_ambiguous() |>
-        dplyr::select(img, group_id, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, n_reads, detection_status) |>
+        dplyr::select(img, group_id, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, status_qc_en, status_ca_en, n_reads, detection_status) |>
         dplyr::arrange(dplyr::desc(n_reads), group_id)
 
       reactable::reactable(
@@ -310,8 +448,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
             cell = function(value) {
               if (!is.na(value)) {
                 # Convert data/img/filename.jpg to img/filename.jpg for Shiny resource path
-                img_path <- sub("^data/", "", value)
-                htmltools::tags$img(src = img_path, width = "100%", style = "border-radius: 4px;")
+                htmltools::tags$img(src = value, width = "100%", style = "border-radius: 4px;")
               } else {
                 # Show question mark icon for unknown species
                 htmltools::tags$div(
@@ -414,26 +551,70 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
           itis_url = reactable::colDef(show = FALSE),
           Status = reactable::colDef(
             name = "Status",
-            minWidth = 100,
-            cell = function(value) {
+            minWidth = 150,
+            html = TRUE,
+            cell = function(value, index) {
+              status_ca <- data_sorted$status_ca_en[index]
+              status_qc <- data_sorted$status_qc_en[index]
+
+              parts <- list()
+
+              # Add Native/Exotic status
               if (value == "Exotic") {
-                htmltools::tags$span(
-                  "\u26a0 Exotic"
-                )
+                parts <- c(parts, list(htmltools::tags$div("\u26a0 Exotic")))
               } else if (value == "Native") {
-                htmltools::tags$span(
-                  "\u2713 Native"
-                )
+                parts <- c(parts, list(htmltools::tags$div("\u2713 Native")))
+              }
+
+              # Add CA conservation status
+              if (!is.na(status_ca)) {
+                parts <- c(parts, list(
+                  htmltools::tags$div(
+                    style = "color: #d9534f; margin-top: 4px;",
+                    paste0("In Canada: ", status_ca)
+                  )
+                ))
+              }
+
+              # Add QC conservation status
+              if (!is.na(status_qc)) {
+                parts <- c(parts, list(
+                  htmltools::tags$div(
+                    style = "color: #d9534f; margin-top: 4px;",
+                    paste0("In Quebec: ", status_qc)
+                  )
+                ))
+              }
+
+              if (length(parts) > 0) {
+                htmltools::tagList(parts)
               } else {
                 ""
               }
             }
           ),
+          status_qc_en = reactable::colDef(show = FALSE),
+          status_ca_en = reactable::colDef(show = FALSE),
           n_reads = reactable::colDef(
             show = FALSE
           ),
           detection_status = reactable::colDef(
             name = "Detection status",
+            header = function(value) {
+              htmltools::HTML(
+                paste0(
+                  '<span>Detection status ',
+                  '<a href="#" onclick="Shiny.setInputValue(\'species_table_module-show_detection_modal\', Math.random()); return false;" ',
+                  'style="color: #0066CC; cursor: pointer; text-decoration: none; margin-left: 5px;">',
+                  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="currentColor">',
+                  '<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1" fill="none"/>',
+                  '<text x="8" y="12" font-size="12" text-anchor="middle" fill="currentColor" font-weight="bold">i</text>',
+                  '</svg>',
+                  '</a></span>'
+                )
+              )
+            },
+            html = TRUE,
             minWidth = 150,
             align = "left",
             cell = function(value, index) {
