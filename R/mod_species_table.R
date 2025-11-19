@@ -54,6 +54,11 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
             Exotic_Quebec == TRUE ~ "Exotic",
             Native_Quebec == TRUE ~ "Native",
             TRUE ~ ""
+          ),
+          detection_status = dplyr::case_when(
+            n_reads > 100 ~ "Confident",
+            n_reads > 10 ~ "Probable",
+            TRUE ~ "Uncertain"
           )
         )
     })
@@ -90,6 +95,11 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
             Exotic_Quebec == TRUE ~ "Exotic",
             Native_Quebec == TRUE ~ "Native",
             TRUE ~ ""
+          ),
+          detection_status = dplyr::case_when(
+            n_reads > 100 ~ "Confident",
+            n_reads > 10 ~ "Probable",
+            TRUE ~ "Uncertain"
           )
         )
     })
@@ -98,7 +108,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
     output$species_table <- reactable::renderReactable({
       reactable::reactable(
         filtered_data() |>
-          dplyr::select(img, Group, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, n_reads) |>
+          dplyr::select(img, Group, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, n_reads, detection_status) |>
           dplyr::arrange(dplyr::desc(n_reads)),
         searchable = TRUE,
         pagination = TRUE,
@@ -238,19 +248,35 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
             }
           ),
           n_reads = reactable::colDef(
-            name = "Reads",
-            format = reactable::colFormat(separators = TRUE),
-            minWidth = 100,
-            align = "right",
-            style = function(value) {
-              color <- if (value > 10000) {
+            show = FALSE
+          ),
+          detection_status = reactable::colDef(
+            name = "Detection status",
+            minWidth = 150,
+            align = "left",
+            cell = function(value, index) {
+              data_sorted <- filtered_data() |> dplyr::arrange(dplyr::desc(n_reads))
+              reads <- data_sorted$n_reads[index]
+              formatted_reads <- format(reads, big.mark = ",")
+
+              color <- if (value == "Confident") {
                 "#00A000"
-              } else if (value > 1000) {
+              } else if (value == "Probable") {
                 "#FFA500"
               } else {
-                "#666666"
+                "#999999"
               }
-              list(color = color, fontWeight = "bold")
+
+              htmltools::tagList(
+                htmltools::tags$div(
+                  style = paste0("color: ", color, "; font-weight: bold;"),
+                  value
+                ),
+                htmltools::tags$div(
+                  style = "color: inherit; font-weight: normal; font-size: 0.9em; margin-top: 2px;",
+                  paste0(format(reads, big.mark = " "), " reads")
+                )
+              )
             }
           )
         ),
@@ -263,7 +289,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
     # Render ambiguous groups table
     output$ambiguous_table <- reactable::renderReactable({
       data_sorted <- filtered_ambiguous() |>
-        dplyr::select(img, group_id, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, n_reads) |>
+        dplyr::select(img, group_id, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, n_reads, detection_status) |>
         dplyr::arrange(dplyr::desc(n_reads), group_id)
 
       reactable::reactable(
@@ -404,19 +430,34 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
             }
           ),
           n_reads = reactable::colDef(
-            name = "Reads",
-            format = reactable::colFormat(separators = TRUE),
-            minWidth = 100,
-            align = "right",
-            style = function(value) {
-              color <- if (value > 10000) {
+            show = FALSE
+          ),
+          detection_status = reactable::colDef(
+            name = "Detection status",
+            minWidth = 150,
+            align = "left",
+            cell = function(value, index) {
+              reads <- data_sorted$n_reads[index]
+              formatted_reads <- format(reads, big.mark = ",")
+
+              color <- if (value == "Confident") {
                 "#00A000"
-              } else if (value > 1000) {
+              } else if (value == "Probable") {
                 "#FFA500"
               } else {
-                "#666666"
+                "#999999"
               }
-              list(color = color, fontWeight = "bold")
+
+              htmltools::tagList(
+                htmltools::tags$div(
+                  style = paste0("color: ", color, "; font-weight: bold;"),
+                  value
+                ),
+                htmltools::tags$div(
+                  style = "color: inherit; font-weight: normal; font-size: 0.9em; margin-top: 2px;",
+                  paste0(format(reads, big.mark = " "), " reads")
+                )
+              )
             }
           )
         ),
