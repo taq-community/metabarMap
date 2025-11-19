@@ -40,7 +40,9 @@ app_ui <- function(request) {
             open = FALSE,
             position = "right",
             width = "500px",
-            shiny::tags$h3("Methodology", style = "margin-top: 0;"),
+            fillable = FALSE,
+            fill = FALSE,
+            gap = "10px",
             shiny::uiOutput("methods_content")
           ),
 
