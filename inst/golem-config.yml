@@ -6,6 +6,19 @@ default:
   project_name: "Metabarcoding study results"
   station_ids: ["ST1","ST10","ST11","ST12","ST13","ST2","ST3","ST4","ST5","ST6","ST7","ST8","ST9"]
   methodology_file: "methodology.md"
+  partners:
+    - name: "CNG"
+      max_height: "80px"
+      url: "https://www.cngov.ca/"
+      image: "img/partners/CNG.png"
+    - name: "INRS"
+      max_height: "80px"
+      url: "https://inrs.ca/"
+      image: "img/partners/inrs.png"
+    - name: "Nemaska Lithium"
+      max_height: "55px"
+      url: "https://nemaskalithium.com/fr/"
+      image: "img/partners/nemaska-lithium.jpg"
 production:
   app_prod: yes
 dev:

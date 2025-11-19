@@ -51,16 +51,19 @@ app_server <- function(input, output, session) {
 
   # Render partner logos
   output$partner_logos <- shiny::renderUI({
-    # Get list of partner logo files
-    partners_dir <- app_sys("extdata", "img", "partners")
-    partner_files <- list.files(partners_dir, pattern = "\\.(png|jpg|jpeg|svg)$", ignore.case = TRUE)
+    # Get partners configuration
+    partners <- get_golem_config("partners")
 
-    # Create image tags for each partner logo
-    logo_tags <- lapply(partner_files, function(file) {
-      shiny::tags$img(
-        src = file.path("img/partners", file),
-        height = "80px",
-        style = "margin: 0 10px; vertical-align: middle;"
+    # Create image tags for each partner
+    logo_tags <- lapply(partners, function(partner) {
+      shiny::tags$a(
+        href = partner$url,
+        target = "_blank",
+        shiny::tags$img(
+          src = partner$image,
+          alt = partner$name,
+          style = paste0("max-height: ", partner$max_height, "; margin: 0 10px; vertical-align: middle;")
+        )
       )
     })
 
