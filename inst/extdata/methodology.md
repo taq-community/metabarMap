@@ -1,6 +1,6 @@
-<h3 style="font-weight:bold;margin-top:2rem;margin-bottom:1rem"> Study design </h3>
-
 This application displays species detected through environmental DNA (eDNA) metabarcoding analysis of water samples collected at **13 sampling stations** in October 2025. No replicates have been considered in laboratory.
+
+eDNA extraction from samples and metagenomic analysis have been performed at the Laboratory of Valerie Langlois by Fidji Sandre (Ph.D.) and Julie Couillard (Ph.D.). Bioinformatics analysis was conducted by Steve Vissault (M.Sc).
 
 <h3 style="font-weight:bold;margin-top:2rem;margin-bottom:1rem"> Methods </h3>
 
