@@ -1,6 +1,6 @@
 Package: metabarMap
 Title: metabarMap
-Version: 1.0.0
+Version: 1.2.0
 Authors@R: 
     person("Steve", "Vissault", , "steve.vissault@inrs.ca", role = c("aut", "cre"))
 Description: Expose metabarcoding results as a map
