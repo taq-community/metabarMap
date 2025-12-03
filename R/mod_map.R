@@ -8,8 +8,14 @@ mapUI <- function(id) {
 mapServer <- function(id, map_data) {
   shiny::moduleServer(id, function(input, output, session) {
 
-    # Reactive value to store selected station - preselect first station
-    selected_station <- shiny::reactiveVal(map_data$station[1])
+    # Reactive value to store selected station - preselect default station from config
+    default_station <- get_golem_config("default_station")
+    initial_station <- if (!is.null(default_station) && default_station %in% map_data$station) {
+      default_station
+    } else {
+      map_data$station[1]
+    }
+    selected_station <- shiny::reactiveVal(initial_station)
 
     # Create color palette based on species richness
     output$map <- leaflet::renderLeaflet({
@@ -61,11 +67,11 @@ mapServer <- function(id, map_data) {
         leaflet::setView(
           lng = mean(map_data$long),
           lat = mean(map_data$lat),
-          zoom = 12
+          zoom = 7
         ) |>
-        # Highlight first station on load
+        # Highlight default station on load
         leaflet::addCircleMarkers(
-          data = map_data[1, ],
+          data = map_data[map_data$station == initial_station, ],
           lng = ~long,
           lat = ~lat,
           radius = 12,
