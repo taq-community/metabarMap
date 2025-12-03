@@ -13,7 +13,7 @@ utils::globalVariables(c(
   "Species",
   "Status",
   "TaxonName",
-  "col_link",
+  "col_url",
   "detection_status",
   "gbif_url",
   "group_id",

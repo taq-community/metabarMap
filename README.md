@@ -40,7 +40,7 @@ The application requires project-specific data files in `inst/extdata/`:
     - Ambiguous species may have underscore format:
       `"Group_Genus_Species"`
 3.  **species_info.csv** - Species metadata
-    - Columns: `species`, `English`, `French`, `gbif_url`, `col_link`,
+    - Columns: `species`, `English`, `French`, `gbif_url`, `col_url`,
       `itis_url`, `Native_Quebec`, `Exotic_Quebec`, `status_ca`,
       `status_qc`, `img`
     - `species`: Scientific name (Genus species)

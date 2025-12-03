@@ -103,7 +103,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
         dplyr::mutate(scientific_name = paste(Genus, Species)) |>
         dplyr::left_join(
           species_info |>
-            dplyr::select(species, English, French, gbif_url, col_link, itis_url,
+            dplyr::select(species, English, French, gbif_url, col_url, itis_url,
                          Native_Quebec, Exotic_Quebec, status_ca, status_qc, img),
           by = c("scientific_name" = "species")
         ) |>
@@ -161,7 +161,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
         ) |>
         dplyr::left_join(
           species_info |>
-            dplyr::select(species, English, French, gbif_url, col_link, itis_url,
+            dplyr::select(species, English, French, gbif_url, col_url, itis_url,
                          Native_Quebec, Exotic_Quebec, status_ca, status_qc, img),
           by = c("scientific_name" = "species")
         ) |>
@@ -199,7 +199,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
     # Render reactable
     output$species_table <- reactable::renderReactable({
       data_sorted <- filtered_data() |>
-        dplyr::select(img, Group, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, status_qc_en, status_ca_en, n_reads, detection_status) |>
+        dplyr::select(img, Group, Genus, Species, English, French, gbif_url, col_url, itis_url, Status, status_qc_en, status_ca_en, n_reads, detection_status) |>
         dplyr::arrange(dplyr::desc(n_reads))
 
       reactable::reactable(
@@ -248,7 +248,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
               species <- data$Species[index]
               french <- data$French[index]
               gbif <- data$gbif_url[index]
-              col <- data$col_link[index]
+              col <- data$col_url[index]
               itis <- data$itis_url[index]
 
               # Build common names line
@@ -322,7 +322,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
           ),
           French = reactable::colDef(show = FALSE),
           gbif_url = reactable::colDef(show = FALSE),
-          col_link = reactable::colDef(show = FALSE),
+          col_url = reactable::colDef(show = FALSE),
           itis_url = reactable::colDef(show = FALSE),
           Status = reactable::colDef(
             name = "Status",
@@ -427,7 +427,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
     # Render ambiguous groups table
     output$ambiguous_table <- reactable::renderReactable({
       data_sorted <- filtered_ambiguous() |>
-        dplyr::select(img, group_id, Genus, Species, English, French, gbif_url, col_link, itis_url, Status, status_qc_en, status_ca_en, n_reads, detection_status) |>
+        dplyr::select(img, group_id, Genus, Species, English, French, gbif_url, col_url, itis_url, Status, status_qc_en, status_ca_en, n_reads, detection_status) |>
         dplyr::arrange(dplyr::desc(n_reads), group_id)
 
       reactable::reactable(
@@ -477,7 +477,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
               species <- data_sorted$Species[index]
               french <- data_sorted$French[index]
               gbif <- data_sorted$gbif_url[index]
-              col <- data_sorted$col_link[index]
+              col <- data_sorted$col_url[index]
               itis <- data_sorted$itis_url[index]
 
               # Build common names line
@@ -547,7 +547,7 @@ speciesTableServer <- function(id, species_data, ambiguous_data, selected_statio
           ),
           French = reactable::colDef(show = FALSE),
           gbif_url = reactable::colDef(show = FALSE),
-          col_link = reactable::colDef(show = FALSE),
+          col_url = reactable::colDef(show = FALSE),
           itis_url = reactable::colDef(show = FALSE),
           Status = reactable::colDef(
             name = "Status",
