@@ -15,7 +15,17 @@ app_server <- function(input, output, session) {
 
   # Load data
   localisations <- utils::read.csv(app_sys("extdata", "localisations.csv"), stringsAsFactors = FALSE)
-  species_data_raw <- utils::read.csv(app_sys("extdata", "species_table.csv"), stringsAsFactors = FALSE)
+  species_data_raw <- utils::read.csv(app_sys("extdata", "species_table.csv"), stringsAsFactors = FALSE) |>
+    dplyr::filter(Group != "Total")
+
+  # Filter out excluded species from config
+  excluded_species <- get_golem_config("excluded_species")
+  if (!is.null(excluded_species) && length(excluded_species) > 0) {
+    for (excl in excluded_species) {
+      species_data_raw <- species_data_raw |>
+        dplyr::filter(!(Genus == excl$genus & Species == excl$species))
+    }
+  }
 
   # Prepare data: calculate species richness per station
   # Regular species (excluding ambiguous groups)

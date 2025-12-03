@@ -4,21 +4,32 @@ default:
   app_prod: no
   project_logo: https://b2756793.smushcdn.com/2756793/wp-content/themes/nemaska/assets/images/nemaska-logo-secondary-color.png?lossy=1&strip=1&webp=1
   project_name: "Metabarcoding study results"
-  station_ids: ["ST1","ST10","ST11","ST12","ST13","ST2","ST3","ST4","ST5","ST6","ST7","ST8","ST9"]
+  station_ids: ["A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12","A13","A14","A15","A16","A17","A18","A19","A20","A21","A22","A23","A24","B1","B2","B3","B4","C1","C2","C3","C4","D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12"]
   methodology_file: "methodology.md"
+  excluded_species:
+    - genus: "Bos"
+      species: "taurus"
   partners:
-    - name: "CNG"
+    - name: "Kangi"
       max_height: "80px"
-      url: "https://www.cngov.ca/"
-      image: "img/partners/CNG.png"
+      url: "#"
+      image: "img/partners/Kangi.png"
+    - name: "Kati"
+      max_height: "80px"
+      url: "#"
+      image: "img/partners/Kati.png"
+    - name: "Nuna"
+      max_height: "80px"
+      url: "#"
+      image: "img/partners/Nuna.png"
+    - name: "Uqtr"
+      max_height: "80px"
+      url: "https://www.uqtr.ca/"
+      image: "img/partners/Uqtr.png"
     - name: "INRS"
       max_height: "80px"
       url: "https://inrs.ca/"
       image: "img/partners/inrs.png"
-    - name: "Nemaska Lithium"
-      max_height: "55px"
-      url: "https://nemaskalithium.com/fr/"
-      image: "img/partners/nemaska-lithium.jpg"
 production:
   app_prod: yes
 dev:
