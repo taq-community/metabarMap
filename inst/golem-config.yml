@@ -2,7 +2,7 @@ default:
   golem_name: metabarMap
   golem_version: 0.0.0.9000
   app_prod: no
-  project_logo: "img/partners/Kati.png"
+  project_logo: ""
   project_name: "Metabarcoding study results"
   station_ids: ["A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12","A13","A14","A15","A16","A17","A18","A19","A20","A21","A22","A23","A24","B1","B2","B3","B4","C1","C2","C3","C4","D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12"]
   default_station: "B2"
@@ -11,13 +11,17 @@ default:
     - genus: "Bos"
       species: "taurus"
   partners:
+    - name: "Kati"
+      max_height: "100px"
+      url: "https://www.krg.ca/fr-CA/"
+      image: "img/partners/Kati.png"
     - name: "Kangi"
       max_height: "100px"
       url: "#"
       image: "img/partners/Kangi.png"
     - name: "Nuna"
       max_height: "100px"
-      url: "#"
+      url: "https://www.nunavikparks.ca/fr"
       image: "img/partners/Nuna.png"
     - name: "Uqtr"
       max_height: "70px"

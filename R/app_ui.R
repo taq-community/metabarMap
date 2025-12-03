@@ -15,7 +15,7 @@ app_ui <- function(request) {
         style = "display: flex; align-items: center; gap: 15px;",
         shiny::tags$img(
           src = get_golem_config("project_logo"),
-          height = "80px",
+          height = "100px",
           style = "vertical-align: middle"
         ),
         shiny::tags$h3(
