@@ -10,3 +10,4 @@ inst/extdata/*.csv
 !inst/extdata/QC_especes_en_peril.csv
 inst/extdata/img/*.jpg
 inst/extdata/img/*.png
+inst/extdata/img/*
