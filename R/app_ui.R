@@ -12,7 +12,6 @@ app_ui <- function(request) {
     # Your application UI logic
     bslib::page_navbar(
       title = shiny::tags$div(
-        style = "display: flex; align-items: center; gap: 15px;",
         shiny::tags$img(
           src = get_golem_config("project_logo"),
           height = "100px",
@@ -77,7 +76,7 @@ app_ui <- function(request) {
 
       bslib::nav_item(
         shiny::tags$div(
-          style = "display: flex; align-items: center; height: 100%; gap: 10px;",
+          style = "display: flex; flex-direction: column; height: 100%; gap: 5px;",
           shiny::actionButton(
             "toggle_methods",
             "Methods",
