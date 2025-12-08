@@ -12,14 +12,31 @@ app_ui <- function(request) {
     # Your application UI logic
     bslib::page_navbar(
       title = shiny::tags$div(
-        shiny::tags$img(
-          src = get_golem_config("project_logo"),
-          height = "100px",
-          style = "vertical-align: middle"
+        shiny::tags$div(
+          shiny::tags$img(
+            src = get_golem_config("project_logo"),
+            height = "100px",
+            style = "vertical-align: middle"
+          ),
+          shiny::tags$h3(
+            get_golem_config("project_name"),
+            style = "font-weight: bold; margin: 0; margin-bottom:10px;"
+          )
         ),
-        shiny::tags$h3(
-          get_golem_config("project_name"),
-          style = "font-weight: bold;"
+        shiny::tags$div(
+          style = "display: flex; gap: 10px;",
+          shiny::actionButton(
+            "toggle_methods",
+            "Methods",
+            icon = shiny::icon("circle-info"),
+            class = "btn-dark"
+          ),
+          shiny::downloadButton(
+            "download_all_data",
+            "Download data",
+            icon = shiny::icon("download"),
+            class = "btn-primary"
+          )
         )
       ),
       theme = bslib::bs_theme(
@@ -72,24 +89,6 @@ app_ui <- function(request) {
       # Partner logos
       bslib::nav_item(
         shiny::uiOutput("partner_logos")
-      ),
-
-      bslib::nav_item(
-        shiny::tags$div(
-          style = "display: flex; flex-direction: column; height: 100%; gap: 5px;",
-          shiny::actionButton(
-            "toggle_methods",
-            "Methods",
-            icon = shiny::icon("circle-info"),
-            class = "btn-dark"
-          ),
-          shiny::downloadButton(
-            "download_all_data",
-            "Download data",
-            icon = shiny::icon("download"),
-            class = "btn-primary"
-          )
-        )
       )
     )
   )

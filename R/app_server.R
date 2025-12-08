@@ -78,12 +78,11 @@ app_server <- function(input, output, session) {
     })
 
     shiny::tags$div(
-      style = "display: flex; align-items: center; height: 100%; gap: 5px;",
-      shiny::tags$span(
-        "In collaboration with",
-        style = "font-size: 1em; margin-right: 10px; color: #666;"
-      ),
-      logo_tags
+      style = "display: flex; flex-direction: column; align-items: flex-start; height: 100%; gap: 5px;",
+      shiny::tags$div(
+        style = "display: flex; align-items: center; gap: 5px; flex-wrap: wrap;",
+        logo_tags
+      )
     )
   })
 
