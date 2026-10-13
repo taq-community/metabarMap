@@ -4,6 +4,7 @@
 #' @noRd
 utils::globalVariables(c(
   # Column names from data frames
+  "DetectionMethod",
   "English",
   "Exotic_Quebec",
   "French",
@@ -14,8 +15,9 @@ utils::globalVariables(c(
   "Status",
   "TaxonName",
   "col_url",
+  "detection_order",
   "detection_status",
-  "gbif_url",
+  "qpcr_detection_status",
   "group_id",
   "itis_url",
   "n_reads",

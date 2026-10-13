@@ -98,7 +98,7 @@ docker push localhost:5001/metabarmap:project-tag
 Pull the image localy from the registry 
 
 ```bash
-docker pull localhost:500/metabarmap:v1.0.0-nemaska
+docker pull localhost:5000/metabarmap:project-tag
 ```
 
 ## Configuration

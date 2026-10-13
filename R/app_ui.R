@@ -12,31 +12,27 @@ app_ui <- function(request) {
     # Your application UI logic
     bslib::page_navbar(
       title = shiny::tags$div(
-        shiny::tags$div(
-          shiny::tags$img(
-            src = get_golem_config("project_logo"),
-            height = "100px",
-            style = "vertical-align: middle"
-          ),
-          shiny::tags$h3(
-            get_golem_config("project_name"),
-            style = "font-weight: bold; margin: 0; margin-bottom:10px;"
-          )
+        style = "display: flex; align-items: center; gap: 16px;",
+        shiny::tags$img(
+          src = get_golem_config("project_logo"),
+          height = "50px",
+          style = "vertical-align: middle"
         ),
-        shiny::tags$div(
-          style = "display: flex; gap: 10px;",
-          shiny::actionButton(
-            "toggle_methods",
-            "Methods",
-            icon = shiny::icon("circle-info"),
-            class = "btn-dark"
-          ),
-          shiny::downloadButton(
-            "download_all_data",
-            "Download data",
-            icon = shiny::icon("download"),
-            class = "btn-primary"
-          )
+        shiny::tags$span(
+          get_golem_config("project_name"),
+          style = "font-weight: bold; font-size: 1.2em; white-space: nowrap;"
+        ),
+        shiny::actionButton(
+          "toggle_methods",
+          "Méthodes",
+          icon = shiny::icon("circle-info"),
+          class = "btn-dark btn-sm"
+        ),
+        shiny::downloadButton(
+          "download_all_data",
+          "Télécharger les données",
+          icon = shiny::icon("download"),
+          class = "btn-primary btn-sm"
         )
       ),
       theme = bslib::bs_theme(
@@ -69,7 +65,7 @@ app_ui <- function(request) {
             bslib::card(
               bslib::card_header(
                 shiny::tags$h5(
-                  "Sampling stations"
+                  "Stations d'échantillonnage"
                 )
               ),
               bslib::card_body(

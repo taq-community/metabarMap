@@ -50,7 +50,7 @@ mapServer <- function(id, map_data) {
           color = "white",
           weight = 2,
           layerId = ~station,
-          label = ~lapply(paste0("<strong>Station ", station, "</strong><br>", n_species, " species detected"), htmltools::HTML),
+          label = ~lapply(paste0("<strong>Station ", station, "</strong><br>", n_species, " espèces détectées"), htmltools::HTML),
           labelOptions = leaflet::labelOptions(
             style = list("padding" = "3px 8px"),
             textsize = "13px",
@@ -60,14 +60,14 @@ mapServer <- function(id, map_data) {
         leaflet::addLegend(
           pal = pal,
           values = ~n_species,
-          title = "Number of species detected",
+          title = "Nombre d'espèces détectées",
           position = "bottomright",
           opacity = 0.8
         ) |>
         leaflet::setView(
           lng = mean(map_data$long),
           lat = mean(map_data$lat),
-          zoom = 7
+          zoom = 10
         ) |>
         # Highlight default station on load
         leaflet::addCircleMarkers(
@@ -88,7 +88,7 @@ mapServer <- function(id, map_data) {
       if (!is.null(click)) {
         selected_station(click$id)
 
-        # Update map to highlight selected station
+        # Update map to highlight selected station and zoom in
         leaflet::leafletProxy("map") |>
           leaflet::clearGroup("highlight") |>
           leaflet::addCircleMarkers(
@@ -100,7 +100,8 @@ mapServer <- function(id, map_data) {
             color = "blue",
             weight = 4,
             group = "highlight"
-          )
+          ) |>
+          leaflet::flyTo(lng = click$lng, lat = click$lat, zoom = 12)
       }
     })
 

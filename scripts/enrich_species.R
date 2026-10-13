@@ -1,17 +1,22 @@
+
 get_species_from_barque <- function(path = NULL) {
     read.csv(path) |>
         dplyr::select(Group, Genus, Species) |>
+        dplyr::filter(Group != "Group") |>  # drop repeated header rows
         tidyr::separate_longer_delim(Species, delim = " : ") |>
         dplyr::rowwise() |>
         dplyr::mutate(
-            parts = list(if (Genus == "Hits") strsplit(Species, "_")[[1]] else c(Group, Genus, Species)),
-            Group = parts[1],
-            Genus = parts[2],
+            parts = list(
+                if (!is.na(Genus) && Genus == "Hits") strsplit(Species, "_")[[1]]
+                else c(Group, Genus, Species)
+            ),
+            Group   = parts[1],
+            Genus   = parts[2],
             Species = parts[3]
         ) |>
         dplyr::ungroup() |>
         dplyr::select(-parts) |>
-        dplyr::filter(Group != "Total") |>
+        dplyr::filter(Group != "Total", !is.na(Genus)) |>
         dplyr::distinct()
 }
 

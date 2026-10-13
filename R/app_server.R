@@ -15,8 +15,25 @@ app_server <- function(input, output, session) {
 
   # Load data
   localisations <- utils::read.csv(app_sys("extdata", "localisations.csv"), stringsAsFactors = FALSE)
-  species_data_raw <- utils::read.csv(app_sys("extdata", "species_table.csv"), stringsAsFactors = FALSE) |>
+  species_data_raw <- utils::read.csv(app_sys("extdata", "species_table.csv"), stringsAsFactors = FALSE, check.names = FALSE) |>
     dplyr::filter(Group != "Total")
+
+  # Load qPCR detection statuses and map French labels to English
+  species_info_raw <- utils::read.csv(app_sys("extdata", "species_info.csv"), stringsAsFactors = FALSE)
+  qpcr_raw <- utils::read.csv2(app_sys("extdata", "qPCR.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8-BOM") |>
+    dplyr::left_join(
+      species_info_raw |> dplyr::select(species, French),
+      by = c("espece" = "French")
+    ) |>
+    dplyr::mutate(
+      scientific_name = species,
+      qpcr_detection_status = dplyr::case_when(
+        detection == "Détecté" ~ "Confiant",
+        detection == "Faible"  ~ "Probable",
+        TRUE                   ~ "Incertain"
+      )
+    ) |>
+    dplyr::select(station, scientific_name, qpcr_detection_status)
 
   # Filter out excluded species from config
   excluded_species <- get_golem_config("excluded_species")
@@ -33,17 +50,12 @@ app_server <- function(input, output, session) {
     dplyr::filter(TaxonName != "sample") |>
     dplyr::filter(Group != "MultipleHits") |>
     dplyr::filter(Group != "zMultiple") |>
-    dplyr::select(Group, Genus, Species, dplyr::all_of(get_golem_config("station_ids"))) |>
+    dplyr::select(Group, Genus, Species, DetectionMethod, dplyr::all_of(get_golem_config("station_ids"))) |>
     tidyr::pivot_longer(dplyr::all_of(get_golem_config("station_ids")), names_to = "station_id", values_to = "n_reads") |>
-    dplyr::filter(n_reads > 0)
-
-  # Ambiguous groups (zMultiple)
-  ambiguous_data <- species_data_raw |>
-    dplyr::filter(TaxonName != "sample") |>
-    dplyr::filter(Group == "zMultiple") |>
-    dplyr::select(Group, Genus, Species, dplyr::all_of(get_golem_config("station_ids"))) |>
-    tidyr::pivot_longer(dplyr::all_of(get_golem_config("station_ids")), names_to = "station_id", values_to = "n_reads") |>
-    dplyr::filter(n_reads > 0)
+    dplyr::filter(n_reads > 0) |>
+    dplyr::mutate(scientific_name = paste(Genus, Species)) |>
+    dplyr::left_join(qpcr_raw, by = c("station_id" = "station", "scientific_name" = "scientific_name")) |>
+    dplyr::select(-scientific_name)
 
   species_count_by_station <- species_data |>
     dplyr::group_by(station_id) |>
@@ -57,7 +69,7 @@ app_server <- function(input, output, session) {
   selected_station <- mapServer("map_module", map_data)
 
   # Species table module
-  speciesTableServer("species_table_module", species_data, ambiguous_data, selected_station)
+  speciesTableServer("species_table_module", species_data, selected_station)
 
   # Render partner logos
   output$partner_logos <- shiny::renderUI({
