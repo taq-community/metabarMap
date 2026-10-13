@@ -20,11 +20,8 @@ speciesTableUI <- function(id) {
 }
 
 # Species Table Module Server
-speciesTableServer <- function(id, species_data, selected_station) {
+speciesTableServer <- function(id, species_data, species_info, selected_station) {
   shiny::moduleServer(id, function(input, output, session) {
-
-    # Load species info
-    species_info <- utils::read.csv(system.file("extdata", "species_info.csv", package = "metabarMap"), stringsAsFactors = FALSE)
 
     # Dynamic card title
     output$card_title <- shiny::renderUI({

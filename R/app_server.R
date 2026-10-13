@@ -69,7 +69,7 @@ app_server <- function(input, output, session) {
   selected_station <- mapServer("map_module", map_data)
 
   # Species table module
-  speciesTableServer("species_table_module", species_data, selected_station)
+  speciesTableServer("species_table_module", species_data, species_info_raw, selected_station)
 
   # Render partner logos
   output$partner_logos <- shiny::renderUI({

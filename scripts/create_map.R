@@ -1,3 +1,4 @@
+# Inputs (not versioned): inst/extdata/localisations.csv + those of generate_dfs.R and qPCR.csv
 library(dplyr)
 library(sf)
 library(tmap)
@@ -58,7 +59,7 @@ map_12S <- tm_shape(bbox_expanded, is.master = TRUE) +
       ymod = 0
   ) +
   tm_graticules(col = "white", lwd = 0.3, labels.size = 0.5) +
-  tm_title("Petit-Sagunay\nRichesse spécifique - 12S")
+  tm_title("Rouyn-Noranda\nRichesse spécifique - 12S")
 
 map_COI <- tm_shape(bbox_expanded, is.master = TRUE) +
   tm_tiles("Esri.WorldImagery") +
@@ -81,7 +82,7 @@ map_COI <- tm_shape(bbox_expanded, is.master = TRUE) +
       ymod = 0
   ) +
   tm_graticules(col = "white", lwd = 0.3, labels.size = 0.5) +
-  tm_title("Petit-Sagunay\nRichesse spécifique - COI")
+  tm_title("Rouyn-Noranda\nRichesse spécifique - COI")
 
 # ── qPCR data: one map per species ───────────────────────────────────────────
 
@@ -147,7 +148,7 @@ map_12S_nolabel <- tm_shape(bbox_expanded, is.master = TRUE) +
     size = 0.8
   ) +
   tm_graticules(col = "white", lwd = 0.3, labels.size = 0.5) +
-  tm_title("Petit-Sagunay\nRichesse spécifique - 12S")
+  tm_title("Rouyn-Noranda\nRichesse spécifique - 12S")
 
 map_COI_nolabel <- tm_shape(bbox_expanded, is.master = TRUE) +
   tm_tiles("Esri.WorldImagery") +
@@ -159,7 +160,7 @@ map_COI_nolabel <- tm_shape(bbox_expanded, is.master = TRUE) +
     size = 1
   ) +
   tm_graticules(col = "white", lwd = 0.3, labels.size = 0.5) +
-  tm_title("Petit-Sagunay\nRichesse spécifique - COI")
+  tm_title("Rouyn-Noranda\nRichesse spécifique - COI")
 
 map_qpcr_nolabel <- lapply(unique(qpcr_sf$espece), function(sp) {
   tm_shape(bbox_expanded, is.master = TRUE) +

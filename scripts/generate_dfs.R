@@ -1,6 +1,6 @@
+# Inputs (not versioned): inst/extdata/species_table.csv, inst/extdata/species_info.csv
 library(dplyr)
 library(tidyr)
-library(googlesheets4)
 
 classify_detection_metabar <- function(n) {
     dplyr::case_when(
@@ -42,16 +42,3 @@ species_data_all <- species_table |>
 
 # Split into a named list by detection method
 species_data <- split(species_data_all, species_data_all$DetectionMethod)
-
-# ── Export to Google Sheets ───────────────────────────────────────────────────
-
-# gs4_auth()
-
-# ss <- gs4_create("metabarMap_Petit-Saguenay")
-
-# for (method in names(species_data)) {
-#   sheet_write(species_data[[method]], ss = ss, sheet = method)
-# }
-
-# cat("Google Sheet URL:", ss_url(ss), "\n")
-

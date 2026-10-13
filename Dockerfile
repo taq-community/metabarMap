@@ -8,7 +8,7 @@ RUN Rscript -e 'remotes::install_version("bslib",upgrade="never", version = "0.9
 RUN Rscript -e 'remotes::install_version("bsicons",upgrade="never", version = "0.1.2")'
 RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.1.4")'
 RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.11.1")'
-RUN Rscript -e 'remotes::install_version("config",upgrade="never", version = "0.3.2")'
+RUN Rscript -e 'remotes::install_version("yaml",upgrade="never")'
 RUN Rscript -e 'remotes::install_version("zip",upgrade="never", version = "2.3.3")'
 RUN Rscript -e 'remotes::install_version("tidyr",upgrade="never", version = "1.3.1")'
 RUN Rscript -e 'remotes::install_version("reactable",upgrade="never", version = "0.4.4")'

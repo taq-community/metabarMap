@@ -8,7 +8,6 @@ License: MIT + file LICENSE
 Imports:
     bsicons,
     bslib,
-    config,
     dplyr,
     golem,
     htmltools,
@@ -17,6 +16,7 @@ Imports:
     shiny,
     tidyr,
     utils,
+    yaml,
     zip
 Encoding: UTF-8
 LazyData: true

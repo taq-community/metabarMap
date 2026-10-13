@@ -1,3 +1,5 @@
+# Inputs (not versioned): inst/extdata/{species_table_12s_rn,species_table_COI_rn,COI_12S_RN,qPCR}.csv
+# Output: inst/extdata/species_table.csv
 library(dplyr)
 library(readr)
 library(tidyr)

@@ -19,7 +19,3 @@ default:
       max_height: "70px"
       url: "https://inrs.ca/"
       image: "img/partners/inrs.png"
-production:
-  app_prod: yes
-dev:
-  golem_wd: !expr golem::pkg_path()

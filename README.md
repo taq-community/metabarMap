@@ -28,10 +28,11 @@ The application requires project-specific data files in `inst/extdata/`:
 
 1.  **localisations.csv** - Station coordinates
     - Columns: `station`, `lat`, `long`
+    - Decimal degrees, one row per station
     - Example: `ST1,51.6908819,-75.8168186`
 2.  **species_table.csv** - Detection data (wide format)
-    - Columns: `TaxonName`, `Group`, `Genus`, `Species`, `ST1`, `ST2`,
-      …, `STn`
+    - Columns: `TaxonName`, `Group`, `Genus`, `Species`,
+      `DetectionMethod` (`12S`, `COI` or `qPCR`), `ST1`, `ST2`, …, `STn`
     - Each station column contains read counts (numeric)
     - Species with `Group="zMultiple"` are treated as ambiguous
       detections
@@ -39,7 +40,12 @@ The application requires project-specific data files in `inst/extdata/`:
       `"species1 : species2"`
     - Ambiguous species may have underscore format:
       `"Group_Genus_Species"`
-3.  **species_info.csv** - Species metadata
+3.  **qPCR.csv** - qPCR detections (semicolon-separated, UTF-8 with
+    BOM)
+    - Columns: `espece` (French common name, matched to
+      `species_info.csv`), `station`, `detection` (`Détecté`, `Faible`
+      or other), `copies/L`
+4.  **species_info.csv** - Species metadata
     - Columns: `species`, `English`, `French`, `gbif_url`, `col_url`,
       `itis_url`, `Native_Quebec`, `Exotic_Quebec`, `status_ca`,
       `status_qc`, `img`
@@ -60,6 +66,12 @@ The application requires project-specific data files in `inst/extdata/`:
     - `img`: Path to species image (e.g.,
       `inst/extdata/img/Species_name.jpg`)
 
+**Note:** `inst/extdata/*.csv` (except the two conservation-status
+files below) is git-ignored. Project data is not versioned with the code
+and must be copied into `inst/extdata/` before running or building the
+image. The same applies to `inst/extdata/img/` (except tracked partner
+logos).
+
 ### Images
 
 Species images should be placed in `inst/extdata/img/` with filenames
@@ -70,12 +82,12 @@ matching the paths in `species_info.csv`.
 These files should be downloaded from their respective sources and
 placed in `inst/extdata/`:
 
-4.  **CA_especes_en_peril.csv** - Canadian species at risk
+5.  **CA_especes_en_peril.csv** - Canadian species at risk
     - Source: [Registre public des espèces en péril
       (LEP)](https://registre-especes.canada.ca/index-fr.html#/especes?sortBy=commonNameSort&sortDirection=asc&pageSize=10)
     - Contains federal species at risk designations under Canada’s
       Species at Risk Act (SARA/LEP)
-5.  **QC_especes_en_peril.csv** - Quebec species at risk
+6.  **QC_especes_en_peril.csv** - Quebec species at risk
     - Source: [Liste de la faune vertébrée du Québec - Données
       Québec](https://www.donneesquebec.ca/recherche/dataset/liste-de-la-faune-vertebree-du-quebec/resource/73060a93-990c-4529-b87e-9aaf6772cd06)
     - Contains provincial species at risk under Quebec’s Loi sur les
@@ -84,6 +96,21 @@ placed in `inst/extdata/`:
 **Note:** These files are not tracked in version control due to their
 size. They must be downloaded manually before running
 `scripts/enrich_species.R`.
+
+## Data preparation scripts
+
+`scripts/` holds optional helpers run from the repository root. They read
+the CSV files of `inst/extdata/` (not versioned, see above) and need
+packages that are not dependencies of the app:
+
+- `enrich_species.R`: adds species metadata and conservation status
+  (needs the two conservation-status CSV files)
+- `integrate_data_sources.R`: merges 12S, COI and qPCR tables into
+  `species_table.csv` (`taxize`, `readr`)
+- `generate_dfs.R`: builds the per-method detection tables (`dplyr`,
+  `tidyr`)
+- `create_map.R`: static richness and qPCR maps as PNG (`sf`, `tmap`;
+  sources `generate_dfs.R`)
 
 ## Running Locally
 
@@ -123,7 +150,7 @@ docker push localhost:5001/metabarmap:project-tag
 Pull the image localy from the registry
 
 ``` bash
-docker pull localhost:500/metabarmap:v1.0.0-nemaska
+docker pull localhost:5000/metabarmap:project-tag
 ```
 
 ## Configuration
@@ -133,9 +160,13 @@ Application settings are configured in `inst/golem-config.yml`:
 ``` yaml
 default:
   station_ids: ["ST1","ST2","ST3",...]
+  default_station: "ST1"
   project_name: "Your Project Name"
   project_logo: "https://your-logo-url.png"
   methodology_file: "methodology.md"
+  excluded_species:
+    - genus: "Homo"
+      species: "sapiens"
   partners:
     - name: "Partner Name"
       max_height: "80px"
@@ -148,6 +179,11 @@ default:
 - **station_ids**: Array of station identifiers matching column names in
   `species_table.csv`. These stations will be displayed on the map and
   available for selection.
+
+- **default_station**: Station selected when the app opens.
+
+- **excluded_species**: Genus/species pairs removed from all tables
+  (e.g. human or livestock DNA).
 
 - **project_name**: Application title displayed in the navigation bar
   and browser tab.
@@ -166,3 +202,5 @@ default:
   - `max_height`: Maximum logo height in CSS units (e.g., “80px”)
   - `url`: Partner website URL (opens in new tab when logo is clicked)
   - `image`: Path to logo file relative to `inst/extdata/` directory
+
+Only the `default` section is read.

@@ -5,7 +5,6 @@ dev_history.R
 ^dev$
 $run_dev.*
 ^.here$
-^README\.Rmd$
 ^LICENSE\.md$
 ^Dockerfile$
 ^\.github$
