@@ -12,30 +12,37 @@ app_ui <- function(request) {
     # Your application UI logic
     bslib::page_navbar(
       title = shiny::tags$div(
+        style = "display: flex; align-items: center; flex-wrap: wrap; gap: 8px 24px;",
         shiny::tags$div(
-          shiny::tags$img(
-            src = get_golem_config("project_logo"),
-            height = "100px",
-            style = "vertical-align: middle"
-          ),
-          shiny::tags$h3(
+          if (nzchar(get_golem_config("project_logo"))) {
+            shiny::tags$img(
+              src = get_golem_config("project_logo"),
+              height = "60px",
+              style = "vertical-align: middle"
+            )
+          },
+          shiny::tags$h4(
             get_golem_config("project_name"),
-            style = "font-weight: bold; margin: 0; margin-bottom:10px;"
+            style = "font-weight: bold; margin: 0;"
+          ),
+          shiny::tags$div(
+            get_golem_config("project_subtitle"),
+            style = "font-size: 1rem; color: #666;"
           )
         ),
         shiny::tags$div(
-          style = "display: flex; gap: 10px;",
+          style = "display: inline-flex; gap: 10px; align-items: center;",
           shiny::actionButton(
             "toggle_methods",
             "Methods",
             icon = shiny::icon("circle-info"),
-            class = "btn-dark"
+            class = "btn-dark btn-sm"
           ),
           shiny::downloadButton(
             "download_all_data",
             "Download data",
             icon = shiny::icon("download"),
-            class = "btn-primary"
+            class = "btn-primary btn-sm"
           )
         )
       ),

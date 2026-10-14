@@ -3,3 +3,13 @@ h5 {
     font-size: medium;
     font-weight: bold;
 }
+
+.navbar > .container-fluid {
+    align-items: center;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
